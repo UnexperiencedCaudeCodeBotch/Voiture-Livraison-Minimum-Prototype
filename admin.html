@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DirectDrive</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f9fafb; line-height: 1.6; }
+        .login-screen { max-width: 400px; margin: 5rem auto; background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .login-screen h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .login-screen > p { color: #6b7280; margin-bottom: 2rem; }
+        .hint { margin-top: 1.5rem; font-size: 0.85rem; color: #9ca3af; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+        input[type="password"], input[type="url"] { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+        input:focus { outline: none; border-color: #2563eb; }
+        .btn { width: 100%; padding: 0.875rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-outline { background: transparent; color: #2563eb; border: 2px solid #2563eb; margin-top: 0.5rem; }
+        .btn-outline:hover { background: #eff6ff; }
+        .btn-sm { width: auto; padding: 0.5rem 1.25rem; font-size: 0.9rem; }
+        .error-msg { background: #fef2f2; color: #dc2626; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; }
+        .success-msg { background: #f0fdf4; color: #16a34a; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; }
+        .hidden { display: none !important; }
+        .admin-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .admin-header { background: white; padding: 1.5rem 2rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header h1 { font-size: 1.75rem; }
+        .admin-header-right { display: flex; gap: 1rem; align-items: center; }
+        .admin-header-right a { text-decoration: none; color: #4b5563; font-weight: 500; }
+        .admin-header-right a:hover { color: #2563eb; }
+        .logout-btn { padding: 0.5rem 1.25rem; background: transparent; color: #ef4444; border: 2px solid #ef4444; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .logout-btn:hover { background: #ef4444; color: white; }
+        .tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .tab-btn { padding: 0.6rem 1.2rem; background: white; border: 2px solid #e5e7eb; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; color: #4b5563; }
+        .tab-btn:hover { border-color: #2563eb; color: #2563eb; }
+        .tab-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
+        .tab-panel { background: white; padding: 2rem; border-radius: 12px; }
+        .tab-panel h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .tab-panel > p { color: #6b7280; margin-bottom: 2rem; }
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .image-item { border: 2px solid #e5e7eb; border-radius: 10px; padding: 1.5rem; }
+        .image-preview { width: 100%; height: 140px; background: #f3f4f6; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 3rem; font-weight: 700; color: #2563eb; }
+        .image-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .image-preview.cover img { width: 100%; height: 100%; object-fit: cover; }
+        .image-item h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .image-item .status { color: #6b7280; font-size: 0.85rem; margin-bottom: 1rem; }
+        .hero-preview { width: 100%; height: 200px; background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); border-radius: 10px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .hero-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-preview-overlay { position: absolute; inset: 0; background: rgba(30,64,175,0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem; font-weight: 700; }
+        #success-banner { margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen" class="login-screen">
+    <h1>&#128274; Admin Login</h1>
+    <p>Access the DirectDrive admin panel</p>
+    <div id="login-error"></div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter admin password">
+    </div>
+    <button class="btn" onclick="doLogin()">Login</button>
+    <p class="hint">Default password: <code>admin123</code></p>
+</div>
+
+<div id="admin-panel" class="hidden">
+    <div class="admin-wrap">
+        <div class="admin-header">
+            <h1>DirectDrive Admin</h1>
+            <div class="admin-header-right">
+                <a href="index.html">&#8592; View Site</a>
+                <button class="logout-btn" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+
+        <div id="success-banner"></div>
+
+        <div class="tabs" id="tabs"></div>
+        <div class="tab-panel" id="tab-content"></div>
+    </div>
+</div>
+
+<script>
+    var ADMIN_PASSWORD = 'admin123';
+
+    var brandList = [
+        {
+                "id": "ford",
+                "name": "Ford",
+                "letter": "F"
+        },
+        {
+                "id": "tesla",
+                "name": "Tesla",
+                "letter": "T"
+        },
+        {
+                "id": "gm",
+                "name": "General Motors",
+                "letter": "GM"
+        },
+        {
+                "id": "rivian",
+                "name": "Rivian",
+                "letter": "R"
+        },
+        {
+                "id": "lucid",
+                "name": "Lucid",
+                "letter": "L"
+        },
+        {
+                "id": "polestar",
+                "name": "Polestar",
+                "letter": "P"
+        }
+];
+
+    var carData = {
+        "Ford": [
+                {
+                        "id": "f150-lightning",
+                        "name": "F-150 Lightning"
+                },
+                {
+                        "id": "mustang-mach-e",
+                        "name": "Mustang Mach-E"
+                },
+                {
+                        "id": "f150",
+                        "name": "F-150"
+                },
+                {
+                        "id": "bronco",
+                        "name": "Bronco"
+                },
+                {
+                        "id": "explorer",
+                        "name": "Explorer"
+                },
+                {
+                        "id": "expedition",
+                        "name": "Expedition"
+                },
+                {
+                        "id": "ranger",
+                        "name": "Ranger"
+                },
+                {
+                        "id": "maverick",
+                        "name": "Maverick"
+                },
+                {
+                        "id": "edge",
+                        "name": "Edge"
+                },
+                {
+                        "id": "escape",
+                        "name": "Escape"
+                },
+                {
+                        "id": "bronco-sport",
+                        "name": "Bronco Sport"
+                },
+                {
+                        "id": "transit",
+                        "name": "Transit"
+                }
+        ],
+        "Tesla": [
+                {
+                        "id": "model-s",
+                        "name": "Model S"
+                },
+                {
+                        "id": "model-3",
+                        "name": "Model 3"
+                },
+                {
+                        "id": "model-x",
+                        "name": "Model X"
+                },
+                {
+                        "id": "model-y",
+                        "name": "Model Y"
+                }
+        ],
+        "General Motors": [
+                {
+                        "id": "silverado",
+                        "name": "Silverado"
+                },
+                {
+                        "id": "equinox-ev",
+                        "name": "Equinox EV"
+                },
+                {
+                        "id": "blazer-ev",
+                        "name": "Blazer EV"
+                },
+                {
+                        "id": "colorado",
+                        "name": "Colorado"
+                },
+                {
+                        "id": "traverse",
+                        "name": "Traverse"
+                },
+                {
+                        "id": "trax",
+                        "name": "Trax"
+                },
+                {
+                        "id": "trailblazer",
+                        "name": "Trailblazer"
+                },
+                {
+                        "id": "malibu",
+                        "name": "Malibu"
+                },
+                {
+                        "id": "gmc-sierra",
+                        "name": "Sierra"
+                },
+                {
+                        "id": "gmc-canyon",
+                        "name": "Canyon"
+                },
+                {
+                        "id": "gmc-yukon",
+                        "name": "Yukon"
+                },
+                {
+                        "id": "gmc-terrain",
+                        "name": "Terrain"
+                },
+                {
+                        "id": "gmc-acadia",
+                        "name": "Acadia"
+                },
+                {
+                        "id": "escalade",
+                        "name": "Escalade"
+                },
+                {
+                        "id": "lyriq",
+                        "name": "Lyriq"
+                },
+                {
+                        "id": "ct5",
+                        "name": "CT5"
+                },
+                {
+                        "id": "enclave",
+                        "name": "Enclave"
+                },
+                {
+                        "id": "envision",
+                        "name": "Envision"
+                }
+        ],
+        "Rivian": [
+                {
+                        "id": "r1t",
+                        "name": "R1T"
+                },
+                {
+                        "id": "r1s",
+                        "name": "R1S"
+                }
+        ],
+        "Lucid": [
+                {
+                        "id": "lucid-air",
+                        "name": "Lucid Air"
+                },
+                {
+                        "id": "lucid-gravity",
+                        "name": "Lucid Gravity"
+                }
+        ],
+        "Polestar": [
+                {
+                        "id": "polestar-2",
+                        "name": "Polestar 2"
+                },
+                {
+                        "id": "polestar-3",
+                        "name": "Polestar 3"
+                },
+                {
+                        "id": "polestar-4",
+                        "name": "Polestar 4"
+                }
+        ]
+};
+
+    var activeTab = 'homepage';
+
+    function doLogin() {
+        var pw = document.getElementById('password').value;
+        if (pw === ADMIN_PASSWORD) {
+            sessionStorage.setItem('adminLoggedIn', 'true');
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            renderTabs();
+            showTab('homepage');
+        } else {
+            document.getElementById('login-error').innerHTML = '<div class="error-msg">Incorrect password.</div>';
+        }
+    }
+
+    document.getElementById('password').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    function doLogout() {
+        sessionStorage.removeItem('adminLoggedIn');
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('admin-panel').classList.add('hidden');
+        document.getElementById('password').value = '';
+    }
+
+    function getImg(type, id) { return localStorage.getItem(type + '-image-' + id) || ''; }
+    function setImg(type, id, url) {
+        if (url.trim()) { localStorage.setItem(type + '-image-' + id, url.trim()); }
+        else { localStorage.removeItem(type + '-image-' + id); }
+    }
+
+    function showSuccess(msg) {
+        var el = document.getElementById('success-banner');
+        el.innerHTML = '<div class="success-msg">' + msg + '</div>';
+        setTimeout(function() { el.innerHTML = ''; }, 3000);
+    }
+
+    var TABS = [
+        { id: 'homepage', label: '&#127968; Homepage' },
+        { id: 'brands',   label: '&#127950; Brand Logos' },
+        { id: 'ford',     label: 'Ford' },
+        { id: 'tesla',    label: 'Tesla' },
+        { id: 'gm',       label: 'General Motors' },
+        { id: 'rivian',   label: 'Rivian' },
+        { id: 'lucid',    label: 'Lucid' },
+        { id: 'polestar', label: 'Polestar' }
+    ];
+
+    function renderTabs() {
+        var html = '';
+        for (var i = 0; i < TABS.length; i++) {
+            var t = TABS[i];
+            html += '<button class="tab-btn' + (t.id === activeTab ? ' active' : '') + '" onclick="showTab('' + t.id + '')">' + t.label + '</button>';
+        }
+        document.getElementById('tabs').innerHTML = html;
+    }
+
+    function showTab(tabId) {
+        activeTab = tabId;
+        renderTabs();
+        var content = '';
+        if (tabId === 'homepage') { content = renderHomepageTab(); }
+        else if (tabId === 'brands') { content = renderBrandsTab(); }
+        else { content = renderCarsTab(tabId); }
+        document.getElementById('tab-content').innerHTML = content;
+    }
+
+    function renderHomepageTab() {
+        var current = getImg('hero', 'main');
+        var previewHtml = current
+            ? '<div class="hero-preview cover"><img src="' + current + '" onerror="this.style.display='none'"><div class="hero-preview-overlay">Hero Preview</div></div>'
+            : '<div class="hero-preview"><div class="hero-preview-overlay">Buy Your New Car Directly from the Manufacturer</div></div>';
+        return '<h2>Homepage Hero Image</h2>'
+            + '<p>Set a background image for the welcome banner on the front page.</p>'
+            + previewHtml
+            + '<div class="form-group"><label>Image URL</label>'
+            + '<input type="url" id="hero-url" placeholder="https://example.com/hero.jpg" value="' + current + '"></div>'
+            + '<button class="btn btn-sm" onclick="saveHero()">Save Hero Image</button>'
+            + (current ? ' <button class="btn btn-sm btn-outline" onclick="clearHero()">Reset to Default</button>' : '');
+    }
+
+    function saveHero() {
+        var url = document.getElementById('hero-url').value;
+        setImg('hero', 'main', url);
+        showSuccess('Hero image updated!');
+        showTab('homepage');
+    }
+
+    function clearHero() {
+        setImg('hero', 'main', '');
+        showSuccess('Hero image reset to default gradient.');
+        showTab('homepage');
+    }
+
+    function renderBrandsTab() {
+        var html = '<h2>Brand Logos</h2><p>Set custom logo images for each manufacturer card on the homepage.</p><div class="image-grid">';
+        for (var i = 0; i < brandList.length; i++) {
+            var b = brandList[i];
+            var url = getImg('brand', b.id);
+            html += '<div class="image-item">'
+                + '<div class="image-preview">' + (url ? '<img src="' + url + '" onerror="this.style.display='none'">' : b.letter) + '</div>'
+                + '<h3>' + b.name + '</h3>'
+                + '<p class="status">' + (url ? 'Custom image set' : 'Using default') + '</p>'
+                + '<div class="form-group"><label>Image URL</label><input type="url" id="brand-' + b.id + '" placeholder="https://..." value="' + url + '"></div>'
+                + '<button class="btn btn-sm" onclick="saveBrand('' + b.id + '')">Save</button>'
+                + (url ? ' <button class="btn btn-sm btn-outline" onclick="clearBrand('' + b.id + '')">Reset</button>' : '')
+                + '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function saveBrand(id) {
+        var url = document.getElementById('brand-' + id).value;
+        setImg('brand', id, url);
+        showSuccess('Brand logo updated!');
+        showTab('brands');
+    }
+
+    function clearBrand(id) {
+        setImg('brand', id, '');
+        showSuccess('Brand logo reset.');
+        showTab('brands');
+    }
+
+    function renderCarsTab(brandId) {
+        var brandName = '';
+        for (var i = 0; i < brandList.length; i++) {
+            if (brandList[i].id === brandId) { brandName = brandList[i].name; break; }
+        }
+        var cars = carData[brandName] || [];
+        var html = '<h2>' + brandName + ' Car Images</h2><p>Set custom images for each vehicle in the ' + brandName + ' inventory.</p><div class="image-grid">';
+        for (var j = 0; j < cars.length; j++) {
+            var car = cars[j];
+            var url = getImg('car', car.id);
+            html += '<div class="image-item">'
+                + '<div class="image-preview cover">' + (url ? '<img src="' + url + '" onerror="this.style.display='none'">' : '🚗') + '</div>'
+                + '<h3>' + car.name + '</h3>'
+                + '<p class="status">' + (url ? 'Custom image set' : 'Using default emoji') + '</p>'
+                + '<div class="form-group"><label>Image URL</label><input type="url" id="car-' + car.id + '" placeholder="https://..." value="' + url + '"></div>'
+                + '<button class="btn btn-sm" onclick="saveCar('' + car.id + '')">Save</button>'
+                + (url ? ' <button class="btn btn-sm btn-outline" onclick="clearCar('' + car.id + '')">Reset</button>' : '')
+                + '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function saveCar(id) {
+        var url = document.getElementById('car-' + id).value;
+        setImg('car', id, url);
+        showSuccess('Car image updated!');
+        showTab(activeTab);
+    }
+
+    function clearCar(id) {
+        setImg('car', id, '');
+        showSuccess('Car image reset.');
+        showTab(activeTab);
+    }
+
+    if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        renderTabs();
+        showTab('homepage');
+    }
+</script>
+</body>
+</html>
