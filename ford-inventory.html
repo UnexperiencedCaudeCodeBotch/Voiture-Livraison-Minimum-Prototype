@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ford Inventory - DirectDrive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f9fafb;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        nav a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #2563eb;
+        }
+
+        .saved-count {
+            background: #2563eb;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .brand-header {
+            background: white;
+            padding: 3rem 2rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .brand-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .back-button:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .back-arrow {
+            font-size: 1.2rem;
+        }
+
+        .brand-logo-large {
+            width: 100px;
+            height: 100px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .brand-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-info p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .inventory-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .car-image .emoji {
+            font-size: 4rem;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            background: #ef4444;
+        }
+
+        .car-details {
+            padding: 1.5rem;
+        }
+
+        .car-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .car-type {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-specs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .spec {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .spec-icon {
+            font-size: 1rem;
+        }
+
+        .car-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .msrp {
+            font-size: 0.85rem;
+            color: #6b7280;
+            text-decoration: line-through;
+            margin-left: 0.5rem;
+        }
+
+        .configure-btn {
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .configure-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #10b981;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.electric {
+            background: #10b981;
+        }
+
+        .badge.new {
+            background: #f59e0b;
+        }
+
+        @media (max-width: 768px) {
+            .brand-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .brand-info h1 {
+                font-size: 2rem;
+            }
+
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">DirectDrive</a>
+            <nav>
+                <a href="index.html#brands">All Brands</a>
+                <a href="index.html#saved">Saved Cars<span class="saved-count" id="header-saved-count">0</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="brand-header">
+        <div class="brand-header-content">
+            <a href="index.html" class="back-button">
+                <span class="back-arrow">←</span>
+                <span>Back to Brands</span>
+            </a>
+            <div class="brand-logo-large">F</div>
+            <div class="brand-info">
+                <h1>Ford</h1>
+                <p>Built Ford Tough - Trucks, SUVs, and electric innovation</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="inventory-section">
+        <div class="inventory-grid" id="inventory-grid">
+            <!-- Cars will be loaded here by JavaScript -->
+        </div>
+    </section>
+
+    <script>
+        const fordInventory = [
+            {
+                id: 'f150-lightning',
+                name: 'F-150 Lightning',
+                type: 'Electric Pickup Truck',
+                emoji: '⚡',
+                price: 49995,
+                msrp: 55000,
+                range: '320 miles',
+                power: '580 hp',
+                seats: '5',
+                badge: 'Electric'
+            },
+            {
+                id: 'mustang-mach-e',
+                name: 'Mustang Mach-E',
+                type: 'Electric SUV',
+                emoji: '🏎️',
+                price: 42995,
+                msrp: 46000,
+                range: '312 miles',
+                power: '346 hp',
+                seats: '5',
+                badge: 'Electric'
+            },
+            {
+                id: 'f150',
+                name: 'F-150',
+                type: 'Pickup Truck',
+                emoji: '🚙',
+                price: 36220,
+                msrp: 38500,
+                range: '550 miles',
+                power: '400 hp',
+                seats: '5-6',
+                badge: null
+            },
+            {
+                id: 'bronco',
+                name: 'Bronco',
+                type: 'SUV',
+                emoji: '🏔️',
+                price: 38000,
+                msrp: 40500,
+                range: '400 miles',
+                power: '330 hp',
+                seats: '5',
+                badge: null
+            },
+            {
+                id: 'explorer',
+                name: 'Explorer',
+                type: 'SUV',
+                emoji: '🌲',
+                price: 36760,
+                msrp: 39000,
+                range: '450 miles',
+                power: '300 hp',
+                seats: '7',
+                badge: null
+            },
+            {
+                id: 'expedition',
+                name: 'Expedition',
+                type: 'Full-Size SUV',
+                emoji: '🏕️',
+                price: 54455,
+                msrp: 58000,
+                range: '500 miles',
+                power: '440 hp',
+                seats: '8',
+                badge: null
+            },
+            {
+                id: 'ranger',
+                name: 'Ranger',
+                type: 'Midsize Pickup',
+                emoji: '🛻',
+                price: 32295,
+                msrp: 34500,
+                range: '450 miles',
+                power: '270 hp',
+                seats: '5',
+                badge: null
+            },
+            {
+                id: 'maverick',
+                name: 'Maverick',
+                type: 'Compact Pickup',
+                emoji: '🚗',
+                price: 23920,
+                msrp: 25500,
+                range: '500 miles',
+                power: '191 hp',
+                seats: '5',
+                badge: 'New'
+            },
+            {
+                id: 'edge',
+                name: 'Edge',
+                type: 'Midsize SUV',
+                emoji: '🚐',
+                price: 38640,
+                msrp: 41000,
+                range: '450 miles',
+                power: '335 hp',
+                seats: '5',
+                badge: null
+            },
+            {
+                id: 'escape',
+                name: 'Escape',
+                type: 'Compact SUV',
+                emoji: '🌄',
+                price: 28490,
+                msrp: 30500,
+                range: '400 miles',
+                power: '250 hp',
+                seats: '5',
+                badge: null
+            },
+            {
+                id: 'bronco-sport',
+                name: 'Bronco Sport',
+                type: 'Compact SUV',
+                emoji: '⛰️',
+                price: 30695,
+                msrp: 33000,
+                range: '400 miles',
+                power: '250 hp',
+                seats: '5',
+                badge: null
+            },
+            {
+                id: 'transit',
+                name: 'Transit',
+                type: 'Commercial Van',
+                emoji: '🚚',
+                price: 47800,
+                msrp: 51000,
+                range: '350 miles',
+                power: '310 hp',
+                seats: '2-3',
+                badge: null
+            }
+        ];
+
+        function getSavedCars() {
+            const saved = localStorage.getItem('savedCars');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function saveCar(carId) {
+            let saved = getSavedCars();
+            if (!saved.includes(carId)) {
+                saved.push(carId);
+                localStorage.setItem('savedCars', JSON.stringify(saved));
+            }
+            updateSavedCount();
+        }
+
+        function removeSavedCar(carId) {
+            let saved = getSavedCars();
+            saved = saved.filter(id => id !== carId);
+            localStorage.setItem('savedCars', JSON.stringify(saved));
+            updateSavedCount();
+        }
+
+        function updateSavedCount() {
+            const count = getSavedCars().length;
+            const countElement = document.getElementById('header-saved-count');
+            if (countElement) {
+                countElement.textContent = count;
+            }
+        }
+
+        function getImageUrl(type, id) {
+            const key = `${type}-image-${id}`;
+            return localStorage.getItem(key) || null;
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventory-grid');
+            const savedCars = getSavedCars();
+            
+            grid.innerHTML = fordInventory.map(car => {
+                const imageUrl = getImageUrl('car', car.id);
+                const imageContent = imageUrl 
+                    ? `<img src="${imageUrl}" alt="${car.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                       <span class="emoji" style="display:none;">${car.emoji}</span>`
+                    : `<span class="emoji">${car.emoji}</span>`;
+                
+                return `
+                    <div class="car-card">
+                        <div class="car-image">
+                            ${car.badge ? `<span class="badge ${car.badge.toLowerCase()}">${car.badge}</span>` : ''}
+                            <button class="favorite-btn ${savedCars.includes(car.id) ? 'active' : ''}" 
+                                    onclick="toggleFavorite('${car.id}')"
+                                    aria-label="Save to favorites">
+                                ${savedCars.includes(car.id) ? '❤️' : '🤍'}
+                            </button>
+                            ${imageContent}
+                        </div>
+                        <div class="car-details">
+                            <h3 class="car-name">${car.name}</h3>
+                            <p class="car-type">${car.type}</p>
+                            <div class="car-specs">
+                                <div class="spec">
+                                    <span class="spec-icon">⚡</span>
+                                    <span>${car.power}</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🔋</span>
+                                    <span>${car.range}</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">👥</span>
+                                    <span>${car.seats} seats</span>
+                                </div>
+                            </div>
+                            <div class="car-price">
+                                $${car.price.toLocaleString()}
+                                <span class="msrp">MSRP $${car.msrp.toLocaleString()}</span>
+                            </div>
+                            <button class="configure-btn" onclick="configureCar('${car.id}')">
+                                Configure & Order
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFavorite(carId) {
+            const savedCars = getSavedCars();
+            if (savedCars.includes(carId)) {
+                removeSavedCar(carId);
+            } else {
+                saveCar(carId);
+            }
+            renderInventory();
+        }
+
+        function configureCar(carId) {
+            alert(`Configuration page for ${carId} would open here. This would let you choose color, trim, options, etc.`);
+        }
+
+        updateSavedCount();
+        renderInventory();
+    </script>
+</body>
+</html>
