@@ -337,6 +337,7 @@
 
     var TABS = [
         { id: 'homepage', label: '&#127968; Homepage' },
+        { id: 'apikey',   label: '&#129302; AI Assistant' },
         { id: 'brands',   label: '&#127950; Brand Logos' },
         { id: 'ford',     label: 'Ford' },
         { id: 'tesla',    label: 'Tesla' },
@@ -360,9 +361,42 @@
         renderTabs();
         var content = '';
         if (tabId === 'homepage') { content = renderHomepageTab(); }
+        else if (tabId === 'apikey') { content = renderApiKeyTab(); }
         else if (tabId === 'brands') { content = renderBrandsTab(); }
         else { content = renderCarsTab(tabId); }
         document.getElementById('tab-content').innerHTML = content;
+    }
+
+    function renderApiKeyTab() {
+        var current = localStorage.getItem('dd-api-key') || '';
+        var masked = current ? current.substring(0, 7) + '...' + current.slice(-4) : '';
+        return '<h2>AI Assistant</h2>'
+            + '<p>Enter your Anthropic API key to power the DirectDrive AI car-buying assistant on every page. The key is stored in your browser only and never sent anywhere except the Anthropic API.</p>'
+            + '<div style="background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:1rem;margin:1.5rem 0;font-size:.875rem;color:#92400e;">'
+            + '<strong>Security note:</strong> This key is visible to anyone using this browser. For a production site, use a backend proxy instead.'
+            + '</div>'
+            + '<div class="form-group"><label>Anthropic API Key</label>'
+            + '<input type="password" id="api-key-input" placeholder="sk-ant-..." value="' + current + '"></div>'
+            + (masked ? '<p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem;">Current key: <code>' + masked + '</code></p>' : '')
+            + '<button class="btn btn-sm" onclick="saveApiKey()">Save Key</button>'
+            + (current ? ' <button class="btn btn-sm btn-outline" onclick="clearApiKey()">Remove Key</button>' : '');
+    }
+
+    function saveApiKey() {
+        var key = document.getElementById('api-key-input').value.trim();
+        if (key) {
+            localStorage.setItem('dd-api-key', key);
+            showSuccess('API key saved! The AI assistant is now active on all pages.');
+        } else {
+            showSuccess('No key entered — nothing was saved.');
+        }
+        showTab('apikey');
+    }
+
+    function clearApiKey() {
+        localStorage.removeItem('dd-api-key');
+        showSuccess('API key removed. AI assistant deactivated.');
+        showTab('apikey');
     }
 
     function renderHomepageTab() {
