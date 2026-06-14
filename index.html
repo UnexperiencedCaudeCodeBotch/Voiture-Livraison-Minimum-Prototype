@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DirectDrive - Connect Directly with Car Manufacturers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        nav a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #2563eb;
+        }
+
+        .saved-count {
+            background: #2563eb;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #2563eb;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .brands-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .brand-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .brand-card:hover {
+            border-color: #2563eb;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+        }
+
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            overflow: hidden;
+        }
+
+        .brand-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .brand-card p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .model-count {
+            display: inline-block;
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .saved-section {
+            background: #f9fafb;
+            padding: 5rem 2rem;
+        }
+
+        .saved-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .saved-cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .saved-car-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .saved-car-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .saved-car-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            overflow: hidden;
+        }
+
+        .saved-car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .saved-car-image .emoji {
+            font-size: 3.5rem;
+        }
+
+        .saved-car-details {
+            padding: 1.5rem;
+        }
+
+        .saved-car-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .saved-car-brand {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .saved-car-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .remove-btn {
+            width: 100%;
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            background: #ffffff;
+            padding: 5rem 2rem;
+        }
+
+        .features-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: #2563eb;
+            border-radius: 12px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .feature h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: #6b7280;
+        }
+
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .brands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">DirectDrive</div>
+            <nav>
+                <a href="#brands">Brands</a>
+                <a href="#saved">Saved Cars<span class="saved-count" id="saved-count">0</span></a>
+                <a href="#how-it-works">How It Works</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1>Buy Your New Car Directly from the Manufacturer</h1>
+            <p>Skip the traditional dealership markup. We connect you directly with car manufacturers for transparent pricing and a better buying experience.</p>
+            <a href="#brands" class="cta-button">Browse Brands</a>
+        </div>
+    </section>
+
+    <section class="brands-section" id="brands">
+        <div class="section-header">
+            <h2>Browse by Brand</h2>
+            <p>Select a manufacturer to explore their latest models and exclusive direct-to-consumer pricing</p>
+        </div>
+
+        <div class="brands-grid" id="brands-grid">
+            <!-- Brands will be loaded here by JavaScript -->
+        </div>
+    </section>
+
+    <section class="saved-section" id="saved">
+        <div class="saved-content">
+            <div class="section-header">
+                <h2>Saved Cars</h2>
+                <p>Your favorited vehicles are saved here for easy comparison</p>
+            </div>
+
+            <div id="saved-cars-container">
+                <!-- Saved cars will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="features-content">
+            <div class="section-header">
+                <h2>Why Choose DirectDrive?</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3>Transparent Pricing</h3>
+                    <p>See manufacturer-direct pricing with no hidden dealer markups or fees</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🚗</div>
+                    <h3>Factory Direct</h3>
+                    <p>Buy straight from the source and support manufacturer-to-consumer sales</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📋</div>
+                    <h3>Simple Process</h3>
+                    <p>Configure your vehicle online and complete the purchase from home</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">✓</div>
+                    <h3>Full Warranty</h3>
+                    <p>All vehicles come with complete manufacturer warranty coverage</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 DirectDrive. Connecting manufacturers with consumers.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Compliant with state franchise laws through authorized dealership partnerships.</p>
+    </footer>
+
+    <script>
+        const allCars = {
+            'f150-lightning': { name: 'F-150 Lightning', brand: 'Ford', price: 49995, emoji: '⚡' },
+            'mustang-mach-e': { name: 'Mustang Mach-E', brand: 'Ford', price: 42995, emoji: '🏎️' },
+            'f150': { name: 'F-150', brand: 'Ford', price: 36220, emoji: '🚙' },
+            'bronco': { name: 'Bronco', brand: 'Ford', price: 38000, emoji: '🏔️' },
+            'explorer': { name: 'Explorer', brand: 'Ford', price: 36760, emoji: '🌲' },
+            'expedition': { name: 'Expedition', brand: 'Ford', price: 54455, emoji: '🏕️' },
+            'ranger': { name: 'Ranger', brand: 'Ford', price: 32295, emoji: '🛻' },
+            'maverick': { name: 'Maverick', brand: 'Ford', price: 23920, emoji: '🚗' },
+            'edge': { name: 'Edge', brand: 'Ford', price: 38640, emoji: '🚐' },
+            'escape': { name: 'Escape', brand: 'Ford', price: 28490, emoji: '🌄' },
+            'bronco-sport': { name: 'Bronco Sport', brand: 'Ford', price: 30695, emoji: '⛰️' },
+            'transit': { name: 'Transit', brand: 'Ford', price: 47800, emoji: '🚚' }
+        };
+
+        function getSavedCars() {
+            const saved = localStorage.getItem('savedCars');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function removeSavedCar(carId) {
+            let saved = getSavedCars();
+            saved = saved.filter(id => id !== carId);
+            localStorage.setItem('savedCars', JSON.stringify(saved));
+            renderSavedCars();
+            updateSavedCount();
+        }
+
+        function updateSavedCount() {
+            const count = getSavedCars().length;
+            const countElement = document.getElementById('saved-count');
+            if (countElement) {
+                countElement.textContent = count;
+            }
+        }
+
+        function renderSavedCars() {
+            const container = document.getElementById('saved-cars-container');
+            const savedCarIds = getSavedCars();
+
+            if (savedCarIds.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🤍</div>
+                        <h3>No saved cars yet</h3>
+                        <p>Browse our inventory and save your favorite vehicles for easy comparison</p>
+                        <a href="#brands" class="cta-button">Browse Brands</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const savedCarsHtml = savedCarIds
+                .filter(id => allCars[id])
+                .map(id => {
+                    const car = allCars[id];
+                    const imageUrl = getImageUrl('car', id);
+                    const imageContent = imageUrl 
+                        ? `<img src="${imageUrl}" alt="${car.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                           <span class="emoji" style="display:none;">${car.emoji}</span>`
+                        : `<span class="emoji">${car.emoji}</span>`;
+                    
+                    return `
+                        <div class="saved-car-card">
+                            <div class="saved-car-image">
+                                ${imageContent}
+                            </div>
+                            <div class="saved-car-details">
+                                <h3 class="saved-car-name">${car.name}</h3>
+                                <p class="saved-car-brand">${car.brand}</p>
+                                <div class="saved-car-price">$${car.price.toLocaleString()}</div>
+                                <button class="remove-btn" onclick="removeSavedCar('${id}')">
+                                    Remove from Saved
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                })
+                .join('');
+
+            container.innerHTML = `<div class="saved-cars-grid">${savedCarsHtml}</div>`;
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Brand data
+        const brandsData = [
+            { id: 'ford',     name: 'Ford',            emoji: 'F',  description: 'Trucks, SUVs, electric options',         models: 12, link: 'ford-inventory.html'     },
+            { id: 'tesla',    name: 'Tesla',           emoji: 'T',  description: 'Electric vehicles, innovative technology', models: 4,  link: 'tesla-inventory.html'    },
+            { id: 'gm',       name: 'General Motors',  emoji: 'GM', description: 'Chevrolet, GMC, Cadillac, Buick',         models: 18, link: 'gm-inventory.html'       },
+            { id: 'rivian',   name: 'Rivian',          emoji: 'R',  description: 'Electric trucks and SUVs',                models: 2,  link: 'rivian-inventory.html'   },
+            { id: 'lucid',    name: 'Lucid',           emoji: 'L',  description: 'Luxury electric sedans',                  models: 2,  link: 'lucid-inventory.html'    },
+            { id: 'polestar', name: 'Polestar',        emoji: 'P',  description: 'Performance electric vehicles',           models: 3,  link: 'polestar-inventory.html' }
+        ];
+
+        function getImageUrl(type, id) {
+            const key = `${type}-image-${id}`;
+            return localStorage.getItem(key) || null;
+        }
+
+        function renderBrands() {
+            const grid = document.getElementById('brands-grid');
+            grid.innerHTML = brandsData.map(brand => {
+                const imageUrl = getImageUrl('brand', brand.id);
+                const logoContent = imageUrl 
+                    ? `<img src="${imageUrl}" alt="${brand.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='${brand.emoji}';">`
+                    : brand.emoji;
+                
+                return `
+                    <a href="${brand.link}" class="brand-card">
+                        <div class="brand-logo">${logoContent}</div>
+                        <h3>${brand.name}</h3>
+                        <p>${brand.description}</p>
+                        <span class="model-count">${brand.models} Models Available</span>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function applyHeroImage() {
+            var heroUrl = localStorage.getItem('hero-image');
+            var heroEl = document.getElementById('hero');
+            if (heroUrl && heroEl) {
+                heroEl.style.backgroundImage = 'url(' + heroUrl + ')';
+                heroEl.style.backgroundSize = 'cover';
+                heroEl.style.backgroundPosition = 'center';
+            }
+        }
+
+        applyHeroImage();
+        renderBrands();
+        updateSavedCount();
+        renderSavedCars();
+    </script>
+</body>
+</html>
