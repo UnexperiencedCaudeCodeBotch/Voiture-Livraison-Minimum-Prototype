@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toyota Inventory - DirectDrive</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #1a1a1a; background: #f9fafb; }
+        header { background: #ffffff; border-bottom: 1px solid #e5e5e5; padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #2563eb; text-decoration: none; }
+        nav a { margin-left: 2rem; text-decoration: none; color: #4b5563; font-weight: 500; transition: color 0.2s; }
+        nav a:hover { color: #2563eb; }
+        .saved-count { background: #2563eb; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; margin-left: 0.5rem; }
+        .brand-header { background: white; padding: 3rem 2rem; border-bottom: 1px solid #e5e5e5; }
+        .brand-header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; }
+        .back-button { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #2563eb; font-weight: 600; padding: 0.75rem 1.25rem; border: 2px solid #2563eb; border-radius: 8px; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+        .back-button:hover { background: #2563eb; color: white; }
+        .brand-logo-large { width: 100px; height: 100px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: #2563eb; overflow: hidden; flex-shrink: 0; }
+        .brand-logo-large img { width: 100%; height: 100%; object-fit: cover; }
+        .brand-info h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .brand-info p { color: #6b7280; font-size: 1.1rem; }
+        .inventory-section { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem; }
+        .car-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; transition: all 0.3s ease; }
+        .car-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .car-image { width: 100%; height: 220px; background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%); display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; }
+        .car-image img { width: 100%; height: 100%; object-fit: cover; }
+        .car-image .emoji { font-size: 4rem; }
+        .favorite-btn { position: absolute; top: 1rem; right: 1rem; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 2; }
+        .favorite-btn:hover { transform: scale(1.1); }
+        .favorite-btn.active { background: #ef4444; }
+        .badge { position: absolute; top: 1rem; left: 1rem; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; color: white; z-index: 2; }
+        .badge.electric { background: #10b981; }
+        .badge.new { background: #f59e0b; }
+        .badge.hybrid { background: #14b8a6; }
+        .car-details { padding: 1.5rem; }
+        .car-name { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .car-type { color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem; }
+        .car-specs { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .spec { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #6b7280; }
+        .car-price { font-size: 1.75rem; font-weight: 700; color: #2563eb; margin-bottom: 1rem; }
+        .msrp { font-size: 0.85rem; color: #6b7280; text-decoration: line-through; margin-left: 0.5rem; }
+        .configure-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 0.875rem; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .configure-btn:hover { background: #1d4ed8; }
+        @media (max-width: 768px) {
+            .brand-header-content { flex-direction: column; text-align: center; }
+            .brand-info h1 { font-size: 2rem; }
+            .inventory-grid { grid-template-columns: 1fr; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">DirectDrive</a>
+            <nav>
+                <a href="index.html#brands">All Brands</a>
+                <a href="index.html#saved">Saved Cars<span class="saved-count" id="header-saved-count">0</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="brand-header">
+        <div class="brand-header-content">
+            <a href="index.html" class="back-button">&#8592; Back to Brands</a>
+            <div class="brand-logo-large" id="brand-logo">TOY</div>
+            <div class="brand-info">
+                <h1>Toyota</h1>
+                <p>Reliable sedans, SUVs, trucks, and hybrids</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="inventory-section">
+        <div class="inventory-grid" id="inventory-grid"></div>
+    </section>
+
+    <script>
+        var inventory = [
+        {
+                "id": "camry",
+                "name": "Camry",
+                "type": "Midsize Sedan",
+                "emoji": "🚗",
+                "price": 28400,
+                "msrp": 30200,
+                "range": "550 miles",
+                "power": "225 hp",
+                "seats": "5",
+                "badge": null
+        },
+        {
+                "id": "corolla",
+                "name": "Corolla",
+                "type": "Compact Sedan",
+                "emoji": "🚙",
+                "price": 23100,
+                "msrp": 24500,
+                "range": "500 miles",
+                "power": "169 hp",
+                "seats": "5",
+                "badge": null
+        },
+        {
+                "id": "rav4",
+                "name": "RAV4",
+                "type": "Compact SUV",
+                "emoji": "🌲",
+                "price": 29250,
+                "msrp": 31000,
+                "range": "480 miles",
+                "power": "203 hp",
+                "seats": "5",
+                "badge": null
+        },
+        {
+                "id": "highlander",
+                "name": "Highlander",
+                "type": "Midsize SUV",
+                "emoji": "🚐",
+                "price": 40420,
+                "msrp": 43000,
+                "range": "500 miles",
+                "power": "265 hp",
+                "seats": "8",
+                "badge": null
+        },
+        {
+                "id": "tacoma",
+                "name": "Tacoma",
+                "type": "Midsize Pickup",
+                "emoji": "🛻",
+                "price": 31500,
+                "msrp": 33500,
+                "range": "450 miles",
+                "power": "278 hp",
+                "seats": "5",
+                "badge": null
+        },
+        {
+                "id": "tundra",
+                "name": "Tundra",
+                "type": "Full-Size Pickup",
+                "emoji": "🏔️",
+                "price": 40000,
+                "msrp": 42500,
+                "range": "500 miles",
+                "power": "389 hp",
+                "seats": "6",
+                "badge": null
+        },
+        {
+                "id": "prius",
+                "name": "Prius",
+                "type": "Hybrid Hatchback",
+                "emoji": "🍃",
+                "price": 27450,
+                "msrp": 29000,
+                "range": "600 miles",
+                "power": "194 hp",
+                "seats": "5",
+                "badge": "Hybrid"
+        },
+        {
+                "id": "bz4x",
+                "name": "bZ4X",
+                "type": "Electric SUV",
+                "emoji": "⚡",
+                "price": 42000,
+                "msrp": 45000,
+                "range": "252 miles",
+                "power": "214 hp",
+                "seats": "5",
+                "badge": "Electric"
+        }
+];
+        var BRAND_ID = 'toyota';
+        var BRAND_LETTER = 'TOY';
+
+        function getImageUrl(type, id) {
+            return localStorage.getItem(type + '-image-' + id) || null;
+        }
+
+        function getSavedCars() {
+            var saved = localStorage.getItem('savedCars');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function updateSavedCount() {
+            var count = getSavedCars().length;
+            var el = document.getElementById('header-saved-count');
+            if (el) el.textContent = count;
+        }
+
+        function toggleFavorite(carId) {
+            var saved = getSavedCars();
+            var idx = saved.indexOf(carId);
+            if (idx > -1) { saved.splice(idx, 1); } else { saved.push(carId); }
+            localStorage.setItem('savedCars', JSON.stringify(saved));
+            renderInventory();
+            updateSavedCount();
+        }
+
+        function renderInventory() {
+            var grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            var savedCars = getSavedCars();
+            for (var i = 0; i < inventory.length; i++) {
+                var car = inventory[i];
+                var imageUrl = getImageUrl('car', car.id);
+                var isSaved = savedCars.indexOf(car.id) > -1;
+
+                var card = document.createElement('div');
+                card.className = 'car-card';
+
+                var imageDiv = document.createElement('div');
+                imageDiv.className = 'car-image';
+
+                if (car.badge) {
+                    var badge = document.createElement('span');
+                    badge.className = 'badge ' + car.badge.toLowerCase();
+                    badge.textContent = car.badge;
+                    imageDiv.appendChild(badge);
+                }
+
+                var favBtn = document.createElement('button');
+                favBtn.className = 'favorite-btn' + (isSaved ? ' active' : '');
+                favBtn.setAttribute('aria-label', 'Save to favorites');
+                favBtn.textContent = isSaved ? '❤️' : '♡';
+                (function(id) { favBtn.onclick = function() { toggleFavorite(id); }; })(car.id);
+                imageDiv.appendChild(favBtn);
+
+                var emojiSpan = document.createElement('span');
+                emojiSpan.className = 'emoji';
+                emojiSpan.textContent = car.emoji;
+                if (imageUrl) {
+                    var img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = car.name;
+                    emojiSpan.style.display = 'none';
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        this.nextElementSibling.style.display = 'block';
+                    };
+                    imageDiv.appendChild(img);
+                }
+                imageDiv.appendChild(emojiSpan);
+                card.appendChild(imageDiv);
+
+                var details = document.createElement('div');
+                details.className = 'car-details';
+
+                var nameEl = document.createElement('h3');
+                nameEl.className = 'car-name';
+                nameEl.textContent = car.name;
+                details.appendChild(nameEl);
+
+                var typeEl = document.createElement('p');
+                typeEl.className = 'car-type';
+                typeEl.textContent = car.type;
+                details.appendChild(typeEl);
+
+                var specsDiv = document.createElement('div');
+                specsDiv.className = 'car-specs';
+                specsDiv.innerHTML =
+                    '<div class="spec"><span>⚡</span><span>' + car.power + '</span></div>' +
+                    '<div class="spec"><span>&#128267;</span><span>' + car.range + '</span></div>' +
+                    '<div class="spec"><span>&#128101;</span><span>' + car.seats + ' seats</span></div>';
+                details.appendChild(specsDiv);
+
+                var priceDiv = document.createElement('div');
+                priceDiv.className = 'car-price';
+                priceDiv.innerHTML = '$' + car.price.toLocaleString() +
+                    '<span class="msrp">MSRP $' + car.msrp.toLocaleString() + '</span>';
+                details.appendChild(priceDiv);
+
+                var configBtn = document.createElement('button');
+                configBtn.className = 'configure-btn';
+                configBtn.textContent = 'Configure & Order';
+                (function(n) {
+                    configBtn.onclick = function() {
+                        alert('Configure & Order for ' + n + ' coming soon!');
+                    };
+                })(car.name);
+                details.appendChild(configBtn);
+
+                card.appendChild(details);
+                grid.appendChild(card);
+            }
+        }
+
+        function applyBrandImage() {
+            var imageUrl = getImageUrl('brand', BRAND_ID);
+            var logoEl = document.getElementById('brand-logo');
+            if (imageUrl && logoEl) {
+                var img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = BRAND_ID;
+                img.onerror = function() { logoEl.textContent = BRAND_LETTER; };
+                logoEl.innerHTML = '';
+                logoEl.appendChild(img);
+            }
+        }
+
+        applyBrandImage();
+        updateSavedCount();
+        renderInventory();
+    </script>
+<script src="chat-widget.js"></script>
+</body>
+</html>

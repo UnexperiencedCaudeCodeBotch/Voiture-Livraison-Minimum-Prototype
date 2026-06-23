@@ -109,33 +109,54 @@
 var ADMIN_PASSWORD = 'admin123';
 
 var BRANDS = [
-    { id: 'ford',     name: 'Ford',           letter: 'F'  },
-    { id: 'tesla',    name: 'Tesla',          letter: 'T'  },
-    { id: 'gm',       name: 'General Motors', letter: 'GM' },
-    { id: 'rivian',   name: 'Rivian',         letter: 'R'  },
-    { id: 'lucid',    name: 'Lucid',          letter: 'L'  },
-    { id: 'polestar', name: 'Polestar',       letter: 'P'  }
+    { id: 'ford',     name: 'Ford',           letter: 'F'   },
+    { id: 'tesla',    name: 'Tesla',          letter: 'T'   },
+    { id: 'gm',       name: 'General Motors', letter: 'GM'  },
+    { id: 'rivian',   name: 'Rivian',         letter: 'R'   },
+    { id: 'lucid',    name: 'Lucid',          letter: 'L'   },
+    { id: 'polestar', name: 'Polestar',       letter: 'P'   },
+    { id: 'toyota',   name: 'Toyota',         letter: 'TOY' },
+    { id: 'honda',    name: 'Honda',          letter: 'HON' }
+];
+
+/* GM's sub-brands get their own logo (shown on gm.html) and their own car inventory tab,
+   since the 'gm' id above is just the homepage hub card with no inventory of its own. */
+var GM_SUBBRANDS = [
+    { id: 'chevrolet', name: 'Chevrolet', letter: 'C'   },
+    { id: 'gmc',       name: 'GMC',       letter: 'GMC' },
+    { id: 'cadillac',  name: 'Cadillac',  letter: 'CAD' },
+    { id: 'buick',     name: 'Buick',     letter: 'B'   }
 ];
 
 var CAR_DATA = {
-    'ford':     ['f150-lightning:F-150 Lightning','mustang-mach-e:Mustang Mach-E','f150:F-150','bronco:Bronco','explorer:Explorer','expedition:Expedition','ranger:Ranger','maverick:Maverick','edge:Edge','escape:Escape','bronco-sport:Bronco Sport','transit:Transit'],
-    'tesla':    ['model-s:Model S','model-3:Model 3','model-x:Model X','model-y:Model Y'],
-    'gm':       ['silverado:Silverado','equinox-ev:Equinox EV','blazer-ev:Blazer EV','colorado:Colorado','traverse:Traverse','trax:Trax','trailblazer:Trailblazer','malibu:Malibu','gmc-sierra:Sierra','gmc-canyon:Canyon','gmc-yukon:Yukon','gmc-terrain:Terrain','gmc-acadia:Acadia','escalade:Escalade','lyriq:Lyriq','ct5:CT5','enclave:Enclave','envision:Envision'],
-    'rivian':   ['r1t:R1T','r1s:R1S'],
-    'lucid':    ['lucid-air:Lucid Air','lucid-gravity:Lucid Gravity'],
-    'polestar': ['polestar-2:Polestar 2','polestar-3:Polestar 3','polestar-4:Polestar 4']
+    'ford':      ['f150-lightning:F-150 Lightning','mustang-mach-e:Mustang Mach-E','f150:F-150','bronco:Bronco','explorer:Explorer','expedition:Expedition','ranger:Ranger','maverick:Maverick','edge:Edge','escape:Escape','bronco-sport:Bronco Sport','transit:Transit'],
+    'tesla':     ['model-s:Model S','model-3:Model 3','model-x:Model X','model-y:Model Y'],
+    'chevrolet': ['silverado:Silverado','equinox-ev:Equinox EV','blazer-ev:Blazer EV','colorado:Colorado','traverse:Traverse','trax:Trax','trailblazer:Trailblazer','malibu:Malibu'],
+    'gmc':       ['gmc-sierra:Sierra','gmc-canyon:Canyon','gmc-yukon:Yukon','gmc-terrain:Terrain','gmc-acadia:Acadia'],
+    'cadillac':  ['escalade:Escalade','lyriq:Lyriq','ct5:CT5'],
+    'buick':     ['enclave:Enclave','envision:Envision'],
+    'rivian':    ['r1t:R1T','r1s:R1S'],
+    'lucid':     ['lucid-air:Lucid Air','lucid-gravity:Lucid Gravity'],
+    'polestar':  ['polestar-2:Polestar 2','polestar-3:Polestar 3','polestar-4:Polestar 4'],
+    'toyota':    ['camry:Camry','corolla:Corolla','rav4:RAV4','highlander:Highlander','tacoma:Tacoma','tundra:Tundra','prius:Prius','bz4x:bZ4X'],
+    'honda':     ['civic:Civic','accord:Accord','cr-v:CR-V','pilot:Pilot','odyssey:Odyssey','hr-v:HR-V','prologue:Prologue']
 };
 
 var TABS = [
-    { id: 'homepage', label: '&#127968; Homepage'    },
-    { id: 'apikey',   label: '&#129302; AI Assistant' },
-    { id: 'brands',   label: '&#127950; Brand Logos'  },
-    { id: 'ford',     label: 'Ford'                   },
-    { id: 'tesla',    label: 'Tesla'                  },
-    { id: 'gm',       label: 'General Motors'         },
-    { id: 'rivian',   label: 'Rivian'                 },
-    { id: 'lucid',    label: 'Lucid'                  },
-    { id: 'polestar', label: 'Polestar'               }
+    { id: 'homepage',  label: '&#127968; Homepage'    },
+    { id: 'apikey',    label: '&#129302; AI Assistant' },
+    { id: 'brands',    label: '&#127950; Brand Logos'  },
+    { id: 'ford',      label: 'Ford'                   },
+    { id: 'tesla',     label: 'Tesla'                  },
+    { id: 'chevrolet', label: 'Chevrolet'              },
+    { id: 'gmc',       label: 'GMC'                    },
+    { id: 'cadillac',  label: 'Cadillac'               },
+    { id: 'buick',     label: 'Buick'                  },
+    { id: 'rivian',    label: 'Rivian'                 },
+    { id: 'lucid',     label: 'Lucid'                  },
+    { id: 'polestar',  label: 'Polestar'               },
+    { id: 'toyota',    label: 'Toyota'                 },
+    { id: 'honda',     label: 'Honda'                  }
 ];
 
 var activeTab = 'homepage';
@@ -391,11 +412,28 @@ function renderBrandsTab(container) {
         grid.appendChild(makeImageItem('brand', brand.id, brand.name, brand.letter, false));
     });
     container.appendChild(grid);
+
+    var h2b = document.createElement('h2');
+    h2b.textContent = 'GM Sub-Brand Logos';
+    h2b.style.marginTop = '2.5rem';
+    container.appendChild(h2b);
+    var pb = document.createElement('p');
+    pb.className = 'tab-desc';
+    pb.textContent = 'Set custom logo images for each GM sub-brand card on the General Motors page.';
+    container.appendChild(pb);
+
+    var gmGrid = document.createElement('div');
+    gmGrid.className = 'image-grid';
+    GM_SUBBRANDS.forEach(function(brand) {
+        gmGrid.appendChild(makeImageItem('brand', brand.id, brand.name, brand.letter, false));
+    });
+    container.appendChild(gmGrid);
 }
 
 /* ── Cars tab ──────────────────────────────────────────── */
 function renderCarsTab(brandId, container) {
-    var brand = BRANDS.find(function(b) { return b.id === brandId; });
+    var brand = BRANDS.find(function(b) { return b.id === brandId; }) ||
+                GM_SUBBRANDS.find(function(b) { return b.id === brandId; });
     var brandName = brand ? brand.name : brandId;
 
     var h2 = document.createElement('h2');
